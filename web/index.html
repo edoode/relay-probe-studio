@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relay Probe Studio</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="aurora aurora-one"></div>
+    <div class="aurora aurora-two"></div>
+    <div class="shell">
+      <header class="hero panel">
+        <div class="eyebrow">
+          <span class="dot"></span>
+          Relay Probe Studio
+        </div>
+        <div class="hero-grid">
+          <section>
+            <p class="kicker">中转检测工作台</p>
+            <h1>像看一台 Mac 一样，看清你的 Codex 中转。</h1>
+            <p class="hero-copy">
+              它会把模型自报、稳定性、延迟波动、JSON 能力和疑似别名映射整理成一份更直观的体检结果。
+            </p>
+          </section>
+          <aside class="hero-note">
+            <div class="note-label">这版界面做了什么</div>
+            <ul class="note-list">
+              <li>保留原始探测逻辑，不改你的判断标准</li>
+              <li>本地运行，不会把 API Key 存进页面存储</li>
+              <li>用更直观的卡片和结论替代纯终端输出</li>
+            </ul>
+          </aside>
+        </div>
+      </header>
+
+      <main class="app-grid">
+        <section class="panel controls-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Probe Setup</p>
+              <h2>输入你的中转配置</h2>
+            </div>
+            <span class="status-pill" id="statusPill">等待开始</span>
+          </div>
+
+          <form id="probeForm" class="probe-form">
+            <label class="field">
+              <span>Base URL</span>
+              <input
+                type="url"
+                name="base_url"
+                placeholder="https://your-relay.example.com/v1"
+                autocomplete="off"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span>API Key</span>
+              <input
+                type="password"
+                name="api_key"
+                placeholder="sk-..."
+                autocomplete="off"
+                required
+              />
+              <small>只会在当前请求里发给本地服务，不会写进浏览器存储。</small>
+            </label>
+
+            <label class="field">
+              <span>模型 ID</span>
+              <textarea
+                name="models"
+                rows="4"
+                placeholder="gpt-5&#10;gpt-4.1"
+                required
+              ></textarea>
+              <small>支持换行或逗号分隔。填多个时会做疑似别名比对。</small>
+            </label>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>重复次数</span>
+                <input type="number" name="requests" min="1" max="100" value="12" />
+              </label>
+              <label class="field">
+                <span>并发数</span>
+                <input type="number" name="concurrency" min="1" max="20" value="3" />
+              </label>
+            </div>
+
+            <div class="field-grid triple">
+              <label class="field">
+                <span>超时 (秒)</span>
+                <input type="number" name="timeout" min="1" step="1" value="60" />
+              </label>
+              <label class="field">
+                <span>Temperature</span>
+                <input type="number" name="temperature" min="0" step="0.1" value="0" />
+              </label>
+              <label class="field">
+                <span>Max Tokens</span>
+                <input type="number" name="max_tokens" min="1" step="1" value="96" />
+              </label>
+            </div>
+
+            <label class="toggle">
+              <input type="checkbox" name="skip_models_endpoint" />
+              <span>跳过 `/models` 检测</span>
+            </label>
+
+            <div class="actions">
+              <button class="primary-button" type="submit" id="submitButton">
+                <span>开始检测</span>
+              </button>
+              <p class="helper-text">
+                建议先用 12 次 / 3 并发做快速体检，再对可疑模型拉高到 30 次以上复测。
+              </p>
+            </div>
+          </form>
+        </section>
+
+        <section class="results-column">
+          <section class="panel summary-panel" id="summaryPanel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">Overview</p>
+                <h2>还没有结果</h2>
+              </div>
+              <span class="grade grade-empty">--</span>
+            </div>
+            <p class="summary-copy">
+              运行一次检测后，这里会出现整体等级、稳定性概览和最值得怀疑的证据。
+            </p>
+            <div class="metric-grid skeleton-grid">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+            </div>
+          </section>
+
+          <section class="panel findings-panel" id="findingsPanel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">Findings</p>
+                <h2>关键发现</h2>
+              </div>
+            </div>
+            <div class="empty-state">
+              <p>目前还没有证据条目。跑完后，这里会按风险优先级帮你总结。</p>
+            </div>
+          </section>
+
+          <section class="panel detail-panel" id="detailPanel">
+            <div class="panel-head">
+              <div>
+                <p class="panel-kicker">Deep Dive</p>
+                <h2>模型明细</h2>
+              </div>
+            </div>
+            <div class="empty-state">
+              <p>每个模型的单次探测、JSON 能力、稳定性摘要和原始样本都会显示在这里。</p>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="/app.js" defer></script>
+  </body>
+  </html>

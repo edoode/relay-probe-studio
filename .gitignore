@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.tmp
+
+中转稳定性检测.app/
+*.iconset/
+
+.env
+.env.*
