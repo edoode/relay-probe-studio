@@ -1,0 +1,40 @@
+name: Basic checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Check tracked Python syntax without running project code
+        run: |
+          python - <<'PY'
+          import ast
+          import pathlib
+          import subprocess
+          import tokenize
+          files = subprocess.check_output(['git', 'ls-files', '-z', '--', '*.py']).decode('utf-8').split('\0')
+          count = 0
+          for name in filter(None, files):
+              with tokenize.open(pathlib.Path(name)) as source:
+                  ast.parse(source.read(), filename=name)
+              count += 1
+          print(f'Python syntax OK: {count} files; runtime and numerical behavior not tested')
+          PY
+      - name: Check browser JavaScript syntax
+        run: node --check web/app.js
+      - name: Check launcher shell syntax
+        run: bash -n start.command build_app.command app_launcher.sh

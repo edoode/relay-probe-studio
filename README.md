@@ -2,6 +2,14 @@
 
 Apple-style local UI for verifying whether an OpenAI-compatible relay really supports a target model, whether the route is stable, and whether the returned metadata matches what the relay claims.
 
+## Project management
+
+- [Status and validation scope](docs/status.md)
+- [Contributing](CONTRIBUTING.md)
+- [Issues](https://github.com/edoode/relay-probe-studio/issues)
+
+Basic checks validates syntax only; relay behavior and macOS packaging require separate runtime checks.
+
 ## Why This Exists
 
 Relay services often look OpenAI-compatible on the surface, but the details can be messy:
@@ -62,7 +70,7 @@ If `图标.png` exists in the project root, the app bundle will use it as the cu
 ## Privacy
 
 - The UI runs locally on `127.0.0.1`
-- API keys are sent only to the local Python server process
+- The browser sends the API key to the local Python server; the server uses it in Authorization headers when calling the relay endpoint you configure
 - The project does not upload your configuration anywhere on its own
 
 ## Limitations
